@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мини-приложение для расчета зарплаты</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        label {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9f9e9;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Расчет зарплаты</h1>
+        <label for="hours">Отработано часов</label>
+        <input type="number" id="hours" placeholder="Введите количество часов">
+
+        <label for="level">Выберите уровень</label>
+        <select id="level">
+            <option value="Нет уровня">Нет уровня</option>
+            <option value="1 уровень">1 уровень (+20,000 KZT)</option>
+            <option value="2 уровень">2 уровень (+40,000 KZT)</option>
+        </select>
+
+        <label for="overtime">Переработка (часы)</label>
+        <input type="number" id="overtime" placeholder="Введите количество переработанных часов">
+
+        <label for="night_hours">Ночные часы</label>
+        <input type="number" id="night_hours" placeholder="Введите количество ночных часов">
+
+        <button onclick="calculateSalary()">Рассчитать зарплату</button>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        const BASIC_SALARY = 248143;
+        const HOURS_NORM = 160; // Норма часов для месяца
+        const KTU = 105000;  // КТУ
+        const TRAVEL_ALLOWANCE = 5000;  // Разъездные
+
+        function calculateSalary() {
+            const hours = parseFloat(document.getElementById('hours').value);
+            const level = document.getElementById('level').value;
+            const overtime = parseFloat(document.getElementById('overtime').value);
+            const night_hours = parseFloat(document.getElementById('night_hours').value);
+
+            const hourlyRate = BASIC_SALARY / HOURS_NORM;
+
+            const overtimePayment = overtime * hourlyRate;
+            const nightPayment = night_hours * (hourlyRate * 1.5);
+            const levelPayment = level === '1 уровень' ? 20000 : (level === '2 уровень' ? 40000 : 0);
+
+            const totalSalary = BASIC_SALARY + overtimePayment + nightPayment + levelPayment + KTU + TRAVEL_ALLOWANCE;
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <h3>Зарплатный квиток:</h3>
+                <p>Норма часов: ${HOURS_NORM}</p>
+                <p>Отработано часов: ${hours}</p>
+                <p>Переработка: ${overtimePayment} KZT</p>
+                <p>Ночные часы: ${nightPayment} KZT</p>
+                <p>Доплата за уровень: ${levelPayment} KZT</p>
+                <p>КТУ: ${KTU} KZT</p>
+                <p>Разъездные: ${TRAVEL_ALLOWANCE} KZT</p>
+                <p><strong>Общая зарплата: ${totalSalary} KZT</strong></p>
+            `;
+        }
+    </script>
+
+</body>
+</html>
